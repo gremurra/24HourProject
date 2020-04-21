@@ -12,5 +12,10 @@ namespace SocialMedia.Data
         public string Text { get; set; }
         public User Author { get; set; }
         public Post CommentPost { get; set; }
+
+        public static implicit operator Comment(Guid v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
