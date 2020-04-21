@@ -39,12 +39,10 @@ namespace SocialMediaProject.Data
             return new ApplicationDbContext();
         }
 
-        public DbSet<User> User { get; set; }
-        public object PostService { get; set; }
-        public object Comment { get; set; }
-        public object CommentServices { get; set; }
-        public IEnumerable<object> Posts { get; set; }
-        public object ReplyService { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Post>Posts { get; set; }
+        public DbSet<Reply> Replies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

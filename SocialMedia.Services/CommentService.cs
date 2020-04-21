@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Data;
+using SocialMedia.Models;
 using SocialMediaProject.Data;
 using System;
 using System.Collections.Generic;
@@ -11,107 +12,68 @@ namespace SocialMedia.Services
     public class CommentService
     {
         private readonly Guid _userID;
+        private int commentId;
+
+        public int Id { get; private set; }
+        public object Text { get; private set; }
+        public object Author { get; private set; }
+        public object CommentPost { get; private set; }
+        public object ReplyComment { get; internal set; }
 
         public CommentService()
         {
         }
 
-        public CommentService(Guid userID)
-        {
-            _userID = userID;
-        }
 
-        public Guid Id { get; private set; }
-        public object Text { get; private set; }
-        public object Author { get; private set; }
-        public object CommentPost { get; private set; }
 
-        public bool CreateComment(CommentServiceCreate model)
+        public bool CreateComment(CommentCreate model)
         {
-            var entity = new CommentService()
+            var entity = new Comment()
             {
-                Id = _userID,
+                Id = commentId,
                 Text = model.Text,
                 Author = model.Author,
                 CommentPost = model.CommentPost,
             };
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.PostService.add(entity);
+                ctx.Entry(entity);
                 return ctx.SaveChanges() == 1;
             }
         }
-        public IEnumerable<CommentListItem> GetCommnets()
+        public IEnumerable<Comment> GetCommnets()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query =
-                   ctx.Comment.Select (
+                   ctx.Comments.Select (
                        e =>
-                            new UserListItem
+                            new Comment
                             {
                                 Id = e.Id,
-                                Text = e.Text,
                                 Author = e.Author,
+                                Text = e.Text,
                                 CommentPost= e.CommentPost,
 
                             });
                 return query.ToList();
             }
         }
-        public CommentServiceDetail GetCommentServiceById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .PostService
-                        .Single(e => e.Id == id);
-                       
-                var some = entity.ShopVariable.ShopServices;
-                return
-                    new CommentServiceDetail
-                    {
-                       
-                        Id = entity.Id,
-                        Text = entity.Text,
-                        Author = entity.Author,
-                        CommentPost = entity.CommentPost,
-                      
-                    };
-            }
-        }
-        public bool UpdateComment(CommentServiceEdit model)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .PostService
-                        .Single(e => e.Id == model.Id);
-
-                entity.Id = model.Id;
-                entity.Text = model.Text;
-                entity.Author = model.Author;
-                entity.CommentPost = model.CommentPost;
-                
-
-                return ctx.SaveChanges() == 1;
-            }
-        }
+      
+        
         public bool DeleteCommentService(int UserId)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
-                        .CommentServices
-                        .Single(e => e.Id == UserId); //added in model.shopID
+                        .Replies
+                        .Single(e => e.Id == UserId); 
 
 
 
 
-                ctx.PostService.Remove(entity);
+                ctx.Comments.Remove(entity);
 
                 return ctx.SaveChanges() == 1;
             }

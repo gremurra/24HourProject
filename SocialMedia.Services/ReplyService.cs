@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Data;
+using SocialMedia.Models;
 using SocialMediaProject.Data;
 using System;
 using System.Collections.Generic;
@@ -11,113 +12,44 @@ namespace SocialMedia.Services
 {
     public class ReplyService
     {
+        private int replyId;
 
-
-        private readonly Guid _userID;
-
-        public CommentService()
+        public bool CreateReply(ReplyCreate model)
         {
-        }
-
-        public CommentService(Guid userID)
-        {
-            _userID = userID;
-        }
-
-        public Guid Id { get; private set; }
-        public object Text { get; private set; }
-        public object Author { get; private set; }
-        public object CommentPost { get; private set; }
-
-        public bool CreateComment(CommentServiceCreate model)
-        {
-            var entity = new CommentService()
+            var entity = new Reply()
             {
-                Id = _userID,
+                Id = replyId,
                 Text = model.Text,
                 Author = model.Author,
                 CommentPost = model.CommentPost,
+                ReplyComment = model.ReplyComment,
             };
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.PostService.add(entity);
+                ctx.Entry(entity);
                 return ctx.SaveChanges() == 1;
             }
         }
-        public IEnumerable<CommentListItem> GetCommnets()
+        public IEnumerable<Reply> GetReply()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query =
-                   ctx.Comment.Select(
+                   ctx.Replies.Select(
                        e =>
-                            new UserListItem
+                            new Reply
                             {
                                 Id = e.Id,
                                 Text = e.Text,
                                 Author = e.Author,
                                 CommentPost = e.CommentPost,
+                                ReplyComment = e.ReplyComment,
 
                             });
                 return query.ToList();
             }
         }
-        public CommentServiceDetail GetCommentServiceById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .PostService
-                        .Single(e => e.Id == id);
-
-                var some = entity.ShopVariable.ShopServices;
-                return
-                    new CommentServiceDetail
-                    {
-
-                        Id = entity.Id,
-                        Text = entity.Text,
-                        Author = entity.Author,
-                        CommentPost = entity.CommentPost,
-
-                    };
-            }
-        }
-        public bool UpdateComment(CommentServiceEdit model)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .PostService
-                        .Single(e => e.Id == model.Id);
-
-                entity.Id = model.Id;
-                entity.Text = model.Text;
-                entity.Author = model.Author;
-                entity.CommentPost = model.CommentPost;
 
 
-                return ctx.SaveChanges() == 1;
-            }
-        }
-        public bool DeleteCommentService(int UserId)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .CommentServices
-                        .Single(e => e.Id == UserId); //added in model.shopID
-
-
-
-
-                ctx.PostService.Remove(entity);
-
-                return ctx.SaveChanges() == 1;
-            }
-        }
     }
 }
