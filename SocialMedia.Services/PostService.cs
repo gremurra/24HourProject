@@ -11,104 +11,91 @@ namespace SocialMedia.Services
 {
     public class PostService
     {
-        private readonly Guid _userID;
+        private int postId;
 
-        public PostService()
-        {
-        }
 
-        public PostService(Guid userID)
-        {
-            _userID = userID;
-        }
-
-        public Guid Id { get; private set; }
-        public object Titlte { get; private set; }
-        public object Text { get; private set; }
-        public object Author { get; private set; }
 
         public bool PostCreate(PostCreate model)
         {
-            var entity = new PostService()
+            var entity = new Post()
             {
-                Id = _userID,
-                Titlte = model.Titlte,
+                Id = postId,
+                Title = model.Title,
                 Text = model.Text,
                 Author = model.Author,
-               
+
             };
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.PostService.add(entity);
+                ctx.Entry(entity);
                 return ctx.SaveChanges() == 1;
             }
         }
-        public IEnumerable<PostListItem> PostGet()
+        public IEnumerable<Post> PostGet()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query =
                     ctx
                     .Posts
-                    .Where(e => e.UserID == _userID)
+                    .Where(e => e.Id == postId)
                     .Select(e =>
-                                new PostListItem
+                                new Post
                                 {
                                     Id = e.Id,
                                     Title = e.Title,
                                     Text = e.Text,
                                     Author = e.Author,
-                                  
+
                                 });
                 return query.ToList();
             }
         }
 
-        public PostDetail GetPostbyID(int id)
+        public Post GetPostbyID(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
                     .Posts
-                    .Include(e => e.Text)
-                    .Single(e => e.Id == id && e.UserId == _userID);
+                    .Single(e => e.Id == id && e.Id == postId);
                 return
-                    new PostDetail
+                    new Post
                     {
                         Id = entity.Id,
                         Title = entity.Title,
                         Text = entity.Text,
                         Author = entity.Author,
-                        
+
                     };
             }
         }
-        public bool PostUpdate(PostServiceEdit model)
+        public bool PostUpdate(PostEdit model)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
-                        .PostService
-                        .Single(e => e.Id == model.Equals);
+                        .Posts
+                        .Single(e => e.Id == model.Id);
 
                 entity.Id = model.Id;
                 entity.Title = model.Title;
                 entity.Text = model.Text;
                 entity.Author = model.Author;
-               
+
 
                 return ctx.SaveChanges() == 1;
             }
         }
 
-        public bool PostDelete(int Id)
+        public bool PostDelete(PostDelete post)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity = ctx.Posts.Single
-                    (e => e.Id == Id && e.UserID == _userID);
+                    (e => e.Id == post.Id && e.Id == postId);
                 ctx.Posts.Remove(entity);
                 return ctx.SaveChanges() == 1;
             }

@@ -11,6 +11,13 @@ namespace SocialMedia.Models
     public class ReplyCreate
     {
         [Required]
+        [MaxLength(8000)]
+        public string Text { get; set; }
+        [Required]
+        public User Author { get; set; }
+        [Required]
+        public Post CommentPost { get; set; }
+        [Required]
         public Comment ReplyComment { get; set; }
     }
 }
