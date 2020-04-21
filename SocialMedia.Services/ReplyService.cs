@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Data;
+using SocialMedia.Models;
 using SocialMediaProject.Data;
 using System;
 using System.Collections.Generic;
@@ -11,29 +12,13 @@ namespace SocialMedia.Services
 {
     public class ReplyService
     {
+        private int replyId;
 
-
-        private readonly Guid _userID;
-
-        public ReplyService()
+        public bool CreateReply(ReplyCreate model)
         {
-        }
-
-        public ReplyService(Guid userID)
-        {
-            _userID = userID;
-        }
-
-        public Guid Id { get; private set; }
-        public object Text { get; private set; }
-        public object Author { get; private set; }
-        public object CommentPost { get; private set; }
-
-        public bool CreateComment(CommentServiceCreate model)
-        {
-            var entity = new CommentService()
+            var entity = new Reply()
             {
-                Id = _userID,
+                Id = replyId,
                 Text = model.Text,
                 Author = model.Author,
                 CommentPost = model.CommentPost,
@@ -41,18 +26,18 @@ namespace SocialMedia.Services
             };
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.ReplyService.add(entity);
+                ctx.Entry(entity);
                 return ctx.SaveChanges() == 1;
             }
         }
-        public IEnumerable<ReplyListItem> GetReply()
+        public IEnumerable<Reply> GetReply()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query =
-                   ctx.Comment.Select(
+                   ctx.Replies.Select(
                        e =>
-                            new ReplyListItem
+                            new Reply
                             {
                                 Id = e.Id,
                                 Text = e.Text,
@@ -64,64 +49,7 @@ namespace SocialMedia.Services
                 return query.ToList();
             }
         }
-        public ReplyServiceDetail GetReplyServiceById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .ReplyService
-                        .Single(e => e.UserId == id);
-
-                var some = entity.ShopVariable.ShopServices;
-                return
-                    new ReplyServiceDetail
-                    {
-
-                        Id = entity.Id,
-                        Text = entity.Text,
-                        Author = entity.Author,
-                        CommentPost = entity.CommentPost,
-                        ReplyComment = entity.ReplyComment,
-
-                    };
-            }
-        }
-        public bool UpdateReply(ReplyServiceEdit model)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .ReplyService
-                        .Single(e => e.UserId == model.Id);
-
-                entity.Id = model.Id;
-                entity.Text = model.Text;
-                entity.Author = model.Author;
-                entity.CommentPost = model.CommentPost;
-                entity.ReplyComment = model.ReplyComment;
 
 
-                return ctx.SaveChanges() == 1;
-            }
-        }
-        public bool DeleteReplyService(int UserId)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .ReplyServices
-                        .Single(e => e.ReplyComment == UserId); 
-
-
-
-
-                ctx.ReplyService.Remove(entity);
-
-                return ctx.SaveChanges() == 1;
-            }
-        }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Models
 {
-    class PostEdit
+    public class PostEdit
     {
         [Required]
         public int Id { get; set; }
