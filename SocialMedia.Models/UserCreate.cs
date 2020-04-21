@@ -9,6 +9,7 @@ namespace SocialMedia.Models
 {
     public class UserCreate
     {
+
         [Required]
         public string Name { get; set; }
         [Required]
