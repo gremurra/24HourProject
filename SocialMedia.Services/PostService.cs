@@ -11,9 +11,16 @@ namespace SocialMedia.Services
 {
     public class PostService
     {
-        private int postId;
 
+        public int postId;
 
+        public List<Post> postList = new List<Post>();
+
+        public PostService() { }
+        public PostService(int Id) 
+        {
+            postId = Id;
+        }
 
         public bool PostCreate(PostCreate model)
         {
