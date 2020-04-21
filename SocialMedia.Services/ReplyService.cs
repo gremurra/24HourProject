@@ -15,11 +15,11 @@ namespace SocialMedia.Services
 
         private readonly Guid _userID;
 
-        public CommentService()
+        public ReplyService()
         {
         }
 
-        public CommentService(Guid userID)
+        public ReplyService(Guid userID)
         {
             _userID = userID;
         }
@@ -37,84 +37,88 @@ namespace SocialMedia.Services
                 Text = model.Text,
                 Author = model.Author,
                 CommentPost = model.CommentPost,
+                ReplyComment = model.ReplyComment,
             };
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.PostService.add(entity);
+                ctx.ReplyService.add(entity);
                 return ctx.SaveChanges() == 1;
             }
         }
-        public IEnumerable<CommentListItem> GetCommnets()
+        public IEnumerable<ReplyListItem> GetReply()
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query =
                    ctx.Comment.Select(
                        e =>
-                            new UserListItem
+                            new ReplyListItem
                             {
                                 Id = e.Id,
                                 Text = e.Text,
                                 Author = e.Author,
                                 CommentPost = e.CommentPost,
+                                ReplyComment = e.ReplyComment,
 
                             });
                 return query.ToList();
             }
         }
-        public CommentServiceDetail GetCommentServiceById(int id)
+        public ReplyServiceDetail GetReplyServiceById(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
-                        .PostService
-                        .Single(e => e.Id == id);
+                        .ReplyService
+                        .Single(e => e.UserId == id);
 
                 var some = entity.ShopVariable.ShopServices;
                 return
-                    new CommentServiceDetail
+                    new ReplyServiceDetail
                     {
 
                         Id = entity.Id,
                         Text = entity.Text,
                         Author = entity.Author,
                         CommentPost = entity.CommentPost,
+                        ReplyComment = entity.ReplyComment,
 
                     };
             }
         }
-        public bool UpdateComment(CommentServiceEdit model)
+        public bool UpdateReply(ReplyServiceEdit model)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
-                        .PostService
-                        .Single(e => e.Id == model.Id);
+                        .ReplyService
+                        .Single(e => e.UserId == model.Id);
 
                 entity.Id = model.Id;
                 entity.Text = model.Text;
                 entity.Author = model.Author;
                 entity.CommentPost = model.CommentPost;
+                entity.ReplyComment = model.ReplyComment;
 
 
                 return ctx.SaveChanges() == 1;
             }
         }
-        public bool DeleteCommentService(int UserId)
+        public bool DeleteReplyService(int UserId)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
-                        .CommentServices
-                        .Single(e => e.Id == UserId); //added in model.shopID
+                        .ReplyServices
+                        .Single(e => e.ReplyComment == UserId); 
 
 
 
 
-                ctx.PostService.Remove(entity);
+                ctx.ReplyService.Remove(entity);
 
                 return ctx.SaveChanges() == 1;
             }

@@ -25,6 +25,7 @@ namespace SocialMedia.Services
         public object Text { get; private set; }
         public object Author { get; private set; }
         public object CommentPost { get; private set; }
+        public object ReplyComment { get; internal set; }
 
         public bool CreateComment(CommentServiceCreate model)
         {
@@ -81,7 +82,7 @@ namespace SocialMedia.Services
                     };
             }
         }
-        public bool UpdateComment(CommentServiceEdit model)
+        public bool UpdateComment(ReplyServiceEdit model)
         {
             using (var ctx = new ApplicationDbContext())
             {
@@ -105,8 +106,8 @@ namespace SocialMedia.Services
             {
                 var entity =
                     ctx
-                        .CommentServices
-                        .Single(e => e.Id == UserId); //added in model.shopID
+                        .ReplyServices
+                        .Single(e => e.Id == UserId); 
 
 
 

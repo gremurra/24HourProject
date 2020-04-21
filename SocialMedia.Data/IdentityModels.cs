@@ -42,7 +42,7 @@ namespace SocialMediaProject.Data
         public DbSet<User> User { get; set; }
         public object PostService { get; set; }
         public object Comment { get; set; }
-        public object CommentServices { get; set; }
+        public object ReplyServices { get; set; }
         public IEnumerable<object> Posts { get; set; }
         public object ReplyService { get; set; }
 

@@ -12,17 +12,14 @@ namespace SocialMedia.Services
 {
     public class UserService
     {
-        private readonly Guid _userId;
-        private object userId;
+       
+        private readonly object userId;
 
         public object UserId { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
 
-        public UserService(Guid UserID)
-        {
-            _userId = UserID;
-        }
+       
 
         public bool CreateUser(UserCreate model)
         {
@@ -57,16 +54,16 @@ namespace SocialMedia.Services
                 return query.ToArray();
             }
         }
-        public UserService GetUserByID(int Id)
+        public UserService GetUserByID(int UserId)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity =
                     ctx
                     .Users
-                    .Single(e => e.UserId == Id);
+                    .Single(e => e.UserId == UserId);
                 return
-                    new UserService
+                    new UserServices
                     {
                         UserId = entity.UserId,
                         Name = entity.Name,
