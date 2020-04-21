@@ -8,5 +8,8 @@ namespace SocialMedia.Models
 {
     public class PostCreate
     {
+        public object Titlte { get; set; }
+        public object Text { get; set; }
+        public object Author { get; set; }
     }
 }
